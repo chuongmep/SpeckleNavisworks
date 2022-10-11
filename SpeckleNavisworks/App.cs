@@ -35,10 +35,13 @@ namespace SpeckleNavisworks
             }
             catch (Exception ex)
             {
-                List<Account> accounts = LocalContext.GetAccountsByEmail("julian.bolliger@mum.ch");
-                account = accounts.First();
+                //TODO
+                MessageBox.Show(ex.ToString());
+                // List<Account> accounts = LocalContext.GetAccountsByEmail("julian.bolliger@mum.ch");
+                // account = accounts.FirstOrDefault();
             }
-
+            
+            
             var client = new SpeckleApiClient(account.RestApi, false, "Navisworks");
             client.AuthToken = account.Token;
 

@@ -8,7 +8,6 @@ using System.Windows.Input;
 using Autodesk.Navisworks.Api;
 
 using SpeckleCore;
-using SpeckleCoreGeometryClasses;
 using SpeckleNavisworks.Models;
 
 namespace SpeckleNavisworks.ViewModels
@@ -152,9 +151,10 @@ namespace SpeckleNavisworks.ViewModels
             {
                 var props = new Dictionary<string, object>();
                 props.Add("Name", mesh.Name);
-                var speckleMesh = new SpeckleMesh(mesh.CreateVerticesArray(), mesh.CreateVertexIndexArray(), new int[] { }, new double[] { }, properties: props);
-                speckleMesh.Name = mesh.Name;
-                speckleObjects.Add(speckleMesh);
+                // TODO : Need to do now
+                // var speckleMesh = new SpeckleMesh(mesh.CreateVerticesArray(), mesh.CreateVertexIndexArray(), new int[] { }, new double[] { }, properties: props);
+                // speckleMesh.Name = mesh.Name;
+                // speckleObjects.Add(speckleMesh);
             }
 
             // Empty meshes list
