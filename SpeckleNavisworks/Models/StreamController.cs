@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
+using Speckle.Core.Api;
 using SpeckleCore;
+using SpeckleObject = SpeckleCore.SpeckleObject;
+using Stream = Speckle.Core.Api.Stream;
 
 namespace SpeckleNavisworks.Models
 {
@@ -17,8 +18,8 @@ namespace SpeckleNavisworks.Models
         /// Collection of SpeckleStreams in this session
         /// </summary>
         public static List<SpeckleStreamWrapper> SpeckleStreamsWrappers { get; private set; } = new List<SpeckleStreamWrapper>();
-        public static SpeckleApiClient Client { get; set; }
-
+        public static Client Client { get; set; }
+        public static Stream Stream { get; set; }
         /// <summary>
         /// Creates a new SpeckleStream
         /// </summary>
@@ -30,18 +31,18 @@ namespace SpeckleNavisworks.Models
             {
                 try
                 {
-                    var newSender = await Client.IntializeSender(
-                        Client.AuthToken,
-                        Path.GetFileName(NavisworksWrapper.Document.FileName),
-                        "Navisworks Manage",
-                        NavisworksWrapper.DocumentGUID);
-                    var newStream = Client.Stream;
-                    newStream.Name = String.IsNullOrEmpty(name) ? "Anonymous Naviworks Stream" : name;
-                    newStream.Description = String.IsNullOrEmpty(description) ? "There is no description" : description;
-
-                    await Client.StreamUpdateAsync(Client.StreamId, newStream);
-
-                    AddStream(new SpeckleStreamWrapper(newStream));
+                    // var newSender = await Client.IntializeSender(
+                    //     Client.AuthToken,
+                    //     Path.GetFileName(NavisworksWrapper.Document.FileName),
+                    //     "Navisworks Manage",
+                    //     NavisworksWrapper.DocumentGUID);
+                    // var newStream = Client.Stream;
+                    // newStream.Name = String.IsNullOrEmpty(name) ? "Anonymous Naviworks Stream" : name;
+                    // newStream.Description = String.IsNullOrEmpty(description) ? "There is no description" : description;
+                    //
+                    // await Client.StreamUpdateAsync(Client.StreamId, newStream);
+                    //
+                    // AddStream(new SpeckleStreamWrapper(newStream));
 
                     return true;
                 }
@@ -78,7 +79,6 @@ namespace SpeckleNavisworks.Models
                 streamWriter.Close();
             }
         }
-
         /// <summary>
         /// Update a SpeckleStream
         /// </summary>
@@ -98,8 +98,8 @@ namespace SpeckleNavisworks.Models
             var convertedSpeckleObjects = objects;
             // LocalContext.PruneExistingObjects(convertedSpeckleObjects, Client.BaseUrl);
 
-            var cloneResult = Client.StreamCloneAsync(Client.Stream.StreamId).Result;
-            Client.Stream.Children.Add(cloneResult.Clone.StreamId);
+            // var cloneResult = Client.StreamCloneAsync(Client.Stream.StreamId).Result;
+            // Client.Stream.Children.Add(cloneResult.Clone.StreamId);
 
             List<SpeckleObject> persistedSpeckleObjects = new List<SpeckleObject>();
             ViewModels.StreamDetails showProgress = null;
@@ -157,6 +157,8 @@ namespace SpeckleNavisworks.Models
 
                     try
                     {
+                        
+                        
                         var objectResponse = Client.ObjectCreateAsync(payload).Result;
                         responses.Add(objectResponse);
                         persistedSpeckleObjects.AddRange(objectResponse.Resources);
@@ -168,7 +170,7 @@ namespace SpeckleNavisworks.Models
 
                             if (oL.Type != "Placeholder")
                             {
-                                LocalContext.AddSentObject(oL, Client.BaseUrl);
+                                LocalContext.AddSentObject(oL, Client.ServerUrl);
                             }
                         }
 
@@ -204,15 +206,19 @@ namespace SpeckleNavisworks.Models
 
             try
             {
-                var response = Client.StreamUpdateAsync(Client.Stream.StreamId, updateStream).Result;
+                StreamUpdateInput streamUpdateInput = new StreamUpdateInput()
+                { 
+                    // TODO with input
+                };
+                var response = Client.StreamUpdate(streamUpdateInput).Result;
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
 
-            Client.BroadcastMessage("stream", Client.StreamId, new { eventType = "update-global" });
-
+            // Client.BroadcastMessage("stream", Client.StreamId, new { eventType = "update-global" });
+            //TODO : BroadcastMessage    
             Debug.WriteLine("Data sent!");
 
             if (showProgress != null)

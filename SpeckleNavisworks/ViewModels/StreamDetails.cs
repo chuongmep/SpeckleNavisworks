@@ -152,7 +152,7 @@ namespace SpeckleNavisworks.ViewModels
                 var props = new Dictionary<string, object>();
                 props.Add("Name", mesh.Name);
                 // TODO : Need to do now
-                // var speckleMesh = new SpeckleMesh(mesh.CreateVerticesArray(), mesh.CreateVertexIndexArray(), new int[] { }, new double[] { }, properties: props);
+                //var speckleMesh = new SpeckleMesh(mesh.CreateVerticesArray(), mesh.CreateVertexIndexArray(), new int[] { }, new double[] { }, properties: props);
                 // speckleMesh.Name = mesh.Name;
                 // speckleObjects.Add(speckleMesh);
             }
@@ -160,7 +160,7 @@ namespace SpeckleNavisworks.ViewModels
             // Empty meshes list
             NavisworksWrapper.Reset();
 
-            StreamController.Client.Stream = SpeckleStreamWrapper.SpeckleStream;
+            StreamController.Stream = SpeckleStreamWrapper.SpeckleStream;
             StreamController.UpdateStream(speckleObjects, this);
 
             //await SpeckleStreamWrapper.UpdateStream(

@@ -7,8 +7,10 @@ using System.Windows;
 
 using Autodesk.Navisworks.Api;
 using Autodesk.Navisworks.Api.Plugins;
-
+using Speckle.Core.Api;
+using Speckle.Core.Credentials;
 using SpeckleCore;
+using Account = SpeckleCore.Account;
 
 namespace SpeckleNavisworks
 {
@@ -19,7 +21,7 @@ namespace SpeckleNavisworks
         DisplayName = "Speckle Navisworks")]
     public class CreateNewSpeckleStream : AddInPlugin
     {
-        private static Account account;
+        private static Speckle.Core.Credentials.Account defaultAccount;
         private static SpeckleApiClient client;
 
         public override int Execute(params string[] parameters)
@@ -31,7 +33,7 @@ namespace SpeckleNavisworks
 
             try
             {
-                account = LocalContext.GetDefaultAccount();
+                defaultAccount = AccountManager.GetDefaultAccount();
             }
             catch (Exception ex)
             {
@@ -40,10 +42,7 @@ namespace SpeckleNavisworks
                 // List<Account> accounts = LocalContext.GetAccountsByEmail("julian.bolliger@mum.ch");
                 // account = accounts.FirstOrDefault();
             }
-            
-            
-            var client = new SpeckleApiClient(account.RestApi, false, "Navisworks");
-            client.AuthToken = account.Token;
+            var client = new Client(defaultAccount);
 
             Models.StreamController.Client = client;
 
